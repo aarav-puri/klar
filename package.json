@@ -1,0 +1,27 @@
+{
+  "name": "klar",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w web",
+    "build": "npm run build -w @klar/extension && npm run build -w web",
+    "build:web": "npm run build -w web",
+    "build:extension": "npm run build -w @klar/extension",
+    "test": "npm run test -w @klar/core && npm run test -w @klar/extension && npm run test -w web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test:e2e": "npm run build:extension && playwright test",
+    "env:pull": "neon env pull --file apps/web/.env.local",
+    "screenshots": "playwright test --config playwright.shots.config.ts"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.64.0"
+  },
+  "dependencies": {
+    "@neon/config": "^1.8.6",
+    "@neon/env": "^1.5.3"
+  }
+}
