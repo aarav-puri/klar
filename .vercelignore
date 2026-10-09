@@ -1,0 +1,18 @@
+# Only what the web app needs is uploaded to Vercel. Never secrets.
+# Folder rules start with "/" so they only match at the repo root.
+.env
+.env.*
+**/.env
+**/.env.*
+!**/.env.example
+*.pem
+/.claude
+/.neon
+/.data
+/e2e
+/e2e-shots
+/test-results
+/playwright-report
+/apps/extension
+/docs
+/brand
