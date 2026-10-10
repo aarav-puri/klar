@@ -58,8 +58,6 @@ Klar turns your Schoology gradebook into one calm dashboard: exact grades, your 
   </tr>
 </table>
 
-<sub>Screenshots use Klar's fictional example courses, never a real student's grades. Regenerate them with <code>npm run screenshots</code>.</sub>
-
 ## Features
 
 - **Every class on one screen** with the grade Schoology shows, category breakdowns and a trend line
