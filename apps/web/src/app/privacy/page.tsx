@@ -50,7 +50,8 @@ export default async function PrivacyPage() {
           </p>
           <p>
             <strong>Ask Klar.</strong> When you send a question to Ask Klar, we process your question, the earlier messages in that conversation, and your synced
-            grade information in order to generate an answer. We do not store your conversations; they are discarded when you leave the page.
+            grade information in order to generate an answer. We do not store your conversations; they are discarded when you leave the page. We keep a
+            count of the questions you send each day, without their content, to apply usage limits.
           </p>
           <p>
             <strong>Technical information.</strong> Our hosting and infrastructure providers may automatically log technical information such as IP address,
