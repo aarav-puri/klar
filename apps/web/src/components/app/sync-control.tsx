@@ -1,10 +1,11 @@
 "use client";
-import { AlertCircle, RefreshCw } from "lucide-react";
+import { AlertCircle, Monitor, RefreshCw } from "lucide-react";
 import { Popover as P } from "radix-ui";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
+import { MOBILE_SYNC_MESSAGE, useIsMobileDevice } from "@/lib/device";
 import { extensionMarker, onPendingAvailable } from "@/lib/extension-client";
 import { relativeTime } from "@/lib/format";
 import { syncErrorCopy } from "@/lib/sync-errors";
@@ -21,6 +22,7 @@ export function SyncControl({ data }: { data: ShellData }) {
   const [error, setError] = useState<{ code: string; message: string } | null>(null);
   const [open, setOpen] = useState(false);
   const autoRan = useRef(false);
+  const mobile = useIsMobileDevice();
 
   const conn = data.connection;
 
@@ -48,24 +50,24 @@ export function SyncControl({ data }: { data: ShellData }) {
   );
 
   const sync = useCallback(async () => {
-    if (!conn || busy) return;
+    if (!conn || busy || mobile) return;
     setBusy(true);
     setError(null);
     setStage("Starting");
     const out = conn.method === "api" ? await runOfficialSync() : await runExtensionSync({ kind: "sync" }, (p) => setStage(p.message));
     finish(out);
-  }, [conn, busy, finish]);
+  }, [conn, busy, mobile, finish]);
 
   // Pick up captures the extension made while the student browsed Schoology.
   useEffect(() => {
-    if (!conn || !extensionMarker()) return;
+    if (!conn || mobile || !extensionMarker()) return;
     const take = async () => {
       const out = await collectPending();
       if (out) finish(out, true);
     };
     void take();
     return onPendingAvailable(() => void take());
-  }, [conn, finish]);
+  }, [conn, mobile, finish]);
 
   // /app?sync=1 (opened from the extension popup) starts a sync immediately.
   useEffect(() => {
@@ -77,6 +79,26 @@ export function SyncControl({ data }: { data: ShellData }) {
       void sync();
     }
   }, [conn, sync]);
+
+  if (mobile) {
+    return (
+      <P.Root open={open} onOpenChange={setOpen}>
+        <P.Trigger asChild>
+          <Button variant="secondary" size="sm" aria-label="Sync" className="gap-1.5 opacity-60">
+            <RefreshCw />
+          </Button>
+        </P.Trigger>
+        <P.Portal>
+          <P.Content align="end" sideOffset={8} className="z-50 w-64 rounded-lg border border-line bg-surface p-4 shadow-2 data-[state=open]:animate-[fade-in_120ms_ease-out]">
+            <p className="flex gap-2 text-sm font-semibold text-ink">
+              <Monitor className="mt-0.5 size-4 shrink-0 text-ink-2" />
+              {MOBILE_SYNC_MESSAGE}
+            </p>
+          </P.Content>
+        </P.Portal>
+      </P.Root>
+    );
+  }
 
   if (!conn) {
     return (

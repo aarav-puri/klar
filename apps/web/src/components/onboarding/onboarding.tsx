@@ -1,12 +1,13 @@
 "use client";
 import { normalizeSchoologyHost } from "@klar/core/protocol";
-import { Check, Download, ExternalLink, Loader2, Puzzle, ShieldCheck } from "lucide-react";
+import { Check, Download, ExternalLink, Loader2, Monitor, Puzzle, ShieldCheck } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
+import { isMobileDevice, MOBILE_SYNC_MESSAGE, useIsMobileDevice } from "@/lib/device";
 import { detectExtension } from "@/lib/extension-client";
 import { EXTENSION_RELEASE } from "@/lib/extension-release";
 import { syncErrorCopy, type ErrorCopy } from "@/lib/sync-errors";
@@ -84,6 +85,20 @@ export function Onboarding({ officialApi, storeUrl, existingHost, initial }: Onb
   }, [apiReturn, runApiSync]);
 
   const activeIndex = STEPS.findIndex((s) => s.id.includes(step));
+  const mobile = useIsMobileDevice();
+
+  if (mobile && step !== "done") {
+    return (
+      <div className="mx-auto w-full max-w-xl">
+        <Monitor className="mb-6 size-8 text-brand" />
+        <h1 className="text-2xl font-extrabold tracking-tight">Use a computer to connect</h1>
+        <p className="mt-2 text-ink-2">{MOBILE_SYNC_MESSAGE} Open Klar in Chrome on your computer to connect Schoology. Your grades show up here afterwards.</p>
+        <Button asChild size="lg" variant="secondary" className="mt-8">
+          <Link href="/app">Go to dashboard</Link>
+        </Button>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto w-full max-w-xl">
@@ -263,7 +278,7 @@ function ExtensionStep({ storeUrl, error, onReady }: { storeUrl: string; error: 
 
   useEffect(() => {
     let cancelled = false;
-    const chromium = typeof navigator !== "undefined" && /Chrome|Chromium|Edg\//.test(navigator.userAgent) && !/Mobile/.test(navigator.userAgent);
+    const chromium = /Chrome|Chromium|Edg\//.test(navigator.userAgent) && !isMobileDevice(navigator);
     const check = async () => {
       const v = await detectExtension();
       if (cancelled) return;
