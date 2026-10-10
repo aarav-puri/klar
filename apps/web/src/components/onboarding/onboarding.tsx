@@ -1,6 +1,6 @@
 "use client";
 import { normalizeSchoologyHost } from "@klar/core/protocol";
-import { Check, ExternalLink, Loader2, Puzzle, ShieldCheck } from "lucide-react";
+import { Check, Download, ExternalLink, Loader2, Puzzle, ShieldCheck } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -8,6 +8,7 @@ import { useCallback, useEffect, useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { detectExtension } from "@/lib/extension-client";
+import { EXTENSION_RELEASE } from "@/lib/extension-release";
 import { syncErrorCopy, type ErrorCopy } from "@/lib/sync-errors";
 import { runExtensionSync, runOfficialSync, type SyncSummary } from "@/lib/sync-client";
 import { cn } from "@/lib/utils";
@@ -311,32 +312,79 @@ function ExtensionStep({ storeUrl, error, onReady }: { storeUrl: string; error: 
         </div>
       )}
 
-      {state === "missing" && (
-        <ol className="mt-6 space-y-3">
-          <InstallStep n={1} title="Install Klar for Schoology">
-            {storeUrl ? (
-              <Button asChild variant="secondary" size="sm" className="mt-2">
-                <a href={storeUrl} target="_blank" rel="noopener noreferrer">
-                  <Puzzle /> Open Chrome Web Store <ExternalLink />
-                </a>
-              </Button>
-            ) : (
-              <p className="mt-1 text-sm text-ink-2">
-                Development build: run <code className="rounded bg-surface-2 px-1 text-xs">npm run build:extension</code>, open <code className="rounded bg-surface-2 px-1 text-xs">chrome://extensions</code>, turn on Developer mode, choose Load unpacked and pick <code className="rounded bg-surface-2 px-1 text-xs">apps/extension/dist</code>.
-              </p>
-            )}
-          </InstallStep>
-          <InstallStep n={2} title="Check it's turned on">
-            <p className="mt-1 text-sm text-ink-2">Already installed? Turn it on in chrome://extensions.</p>
-          </InstallStep>
-          <InstallStep n={3} title="Come back here">
-            <p className="mt-1 flex items-center gap-2 text-sm text-ink-2">
-              <Loader2 className="size-3.5 animate-spin" /> This page continues once it finds the extension. You may need to reload.
-            </p>
-          </InstallStep>
-        </ol>
-      )}
+      {state === "missing" && (storeUrl ? <StoreInstall storeUrl={storeUrl} /> : <DownloadInstall />)}
     </section>
+  );
+}
+
+function StoreInstall({ storeUrl }: { storeUrl: string }) {
+  return (
+    <ol className="mt-6 space-y-3">
+      <InstallStep n={1} title="Install Klar for Schoology">
+        <Button asChild variant="secondary" size="sm" className="mt-2">
+          <a href={storeUrl} target="_blank" rel="noopener noreferrer">
+            <Puzzle /> Open Chrome Web Store <ExternalLink />
+          </a>
+        </Button>
+      </InstallStep>
+      <InstallStep n={2} title="Check it's turned on">
+        <p className="mt-1 text-sm text-ink-2">Already installed? Turn it on in chrome://extensions.</p>
+      </InstallStep>
+      <ComeBack n={3} />
+    </ol>
+  );
+}
+
+/** Until the Chrome Web Store listing is live: the zip from GitHub, loaded unpacked. */
+function DownloadInstall() {
+  const vt = EXTENSION_RELEASE.virusTotal;
+  return (
+    <>
+      <p className="mt-4 rounded-lg border border-line bg-surface-2 px-4 py-3 text-sm text-ink-2">
+        Klar is currently in the process of being added to the Chrome Web Store. Until then, install it directly.
+      </p>
+      <ol className="mt-3 space-y-3">
+        <InstallStep n={1} title="Download Klar">
+          <div className="mt-2 flex flex-wrap items-center gap-3">
+            <Button asChild size="sm">
+              <a href={EXTENSION_RELEASE.downloadUrl} download>
+                <Download /> Download extension
+              </a>
+            </Button>
+            <a href={vt.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-2 hover:text-ink">
+              <ShieldCheck className="size-4 text-success" />
+              VirusTotal: {vt.flagged}/{vt.engines} flagged <ExternalLink className="size-3.5" />
+            </a>
+          </div>
+          <p className="mt-2 text-xs text-ink-3">
+            v{EXTENSION_RELEASE.version} from{" "}
+            <a href={EXTENSION_RELEASE.releaseUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
+              GitHub
+            </a>
+            . Unzip it.
+          </p>
+        </InstallStep>
+        <InstallStep n={2} title="Turn on Developer mode">
+          <p className="mt-1 text-sm text-ink-2">
+            Open <code className="rounded bg-surface-2 px-1 text-xs">chrome://extensions</code> in a new tab and switch on Developer mode, top right.
+          </p>
+        </InstallStep>
+        <InstallStep n={3} title="Load unpacked">
+          <p className="mt-1 text-sm text-ink-2">Click Load unpacked and choose the unzipped folder.</p>
+        </InstallStep>
+        <ComeBack n={4} />
+      </ol>
+    </>
+  );
+}
+
+function ComeBack({ n }: { n: number }) {
+  return (
+    <InstallStep n={n} title="Come back here">
+      <p className="mt-1 flex items-center gap-2 text-sm text-ink-2">
+        <Loader2 className="size-3.5 animate-spin" /> This page continues once it finds the extension. You may need to reload.
+      </p>
+    </InstallStep>
   );
 }
 
