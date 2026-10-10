@@ -73,7 +73,7 @@ Klar turns your Schoology gradebook into one calm dashboard: exact grades, your 
 ## How it works
 
 1. **Create a Klar account.** An email and a Klar-only password.
-2. **Add the Chrome extension.** You sign in to Schoology on Schoology's own page, as usual.
+2. **Add the Chrome extension.** Klar is being added to the Chrome Web Store; until then, [download it from Releases](https://github.com/aarav-puri/klar/releases/latest) ([VirusTotal: 0/65](https://www.virustotal.com/gui/file/1259f083cc7a9f8fcec519f2463a27a0682cd1b6d021c2a8384da505ff32535d)) and load it unpacked. You sign in to Schoology on Schoology's own page, as usual.
 3. **Press Sync.** The extension reads your gradebook and sends it to your Klar account.
 
 Klar never asks for your Schoology password, never reads your cookies, and can't change anything in Schoology. Every student's data is isolated by Postgres row-level security. Details: [docs/SECURITY.md](docs/SECURITY.md).
