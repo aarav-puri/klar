@@ -38,7 +38,7 @@ export function AppShell({ data, children }: { data: ShellData; children: ReactN
               <AccountMenu data={data} />
             </div>
           </header>
-          <main id="main" className="mx-auto w-full max-w-[1240px] flex-1 px-4 pt-6 pb-28 sm:px-6 lg:px-10 lg:pt-8 lg:pb-16">
+          <main id="main" className="mx-auto w-full max-w-[1240px] flex-1 pl-4 pr-6 pt-6 break-words pb-28 sm:px-6 lg:px-10 lg:pt-8 lg:pb-16">
             {children}
           </main>
         </div>
