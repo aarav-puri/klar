@@ -18,7 +18,6 @@ Klar turns your Schoology gradebook into one calm dashboard: exact grades, your 
 ![Neon Postgres](https://img.shields.io/badge/Neon-Postgres%20%2B%20Auth-0677ba?logo=postgresql&logoColor=white)
 ![Chrome MV3](https://img.shields.io/badge/Chrome-Manifest%20V3-0677ba?logo=googlechrome&logoColor=white)
 ![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-0b1622?logo=vercel&logoColor=white)
-[![MIT license](https://img.shields.io/badge/License-MIT-0677ba)](LICENSE)
 
 </div>
 
@@ -173,7 +172,3 @@ Pushes to `main` deploy to production on Vercel (project root: `apps/web`). Prev
 ## Verifying against a real school
 
 The Schoology integration was built to Schoology's current page markup and documented API and tested against faithful fakes. If numbers ever differ from Schoology's, save the gradebook page (names removed) under `packages/core/test/fixtures/` and extend the parser tests. Unrecognized pages produce a clear `PARSE_FAILED` error, never guessed numbers.
-
-## License
-
-[MIT](LICENSE) © 2026 Aarav Puri
