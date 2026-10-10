@@ -1,13 +1,31 @@
-import { streamText, isStepCount, tool, createUIMessageStreamResponse, toUIMessageStream, type ModelMessage } from "ai";
+import { streamText, isStepCount, tool, createUIMessageStream, createUIMessageStreamResponse, toUIMessageStream, type ModelMessage } from "ai";
 import type { NextRequest } from "next/server";
 import { z } from "zod";
 import { jsonError, readJson, requireStudent } from "@/server/api";
 import { ASSISTANT_MODEL, requiredScoreInput, runRequiredScore, runWhatIf, systemPrompt, whatIfInput } from "@/server/assistant";
+import { asStudent } from "@/server/db";
 import { getWorkspace } from "@/server/data/workspace";
 import { assistantConfigured } from "@/server/env";
 import { limiters } from "@/server/rate-limit";
 
 export const maxDuration = 60;
+
+/** Questions each student can ask per day (Pacific time). */
+const DAILY_MESSAGES = 5;
+const LIMIT_REPLY = "You've reached today's limit for Ask Klar. Come back tomorrow and I'll pick up where you left off.";
+
+/** A normal Klar reply, so hitting the limit reads like any other answer. */
+function reply(text: string) {
+  return createUIMessageStreamResponse({
+    stream: createUIMessageStream({
+      execute: ({ writer }) => {
+        writer.write({ type: "text-start", id: "limit" });
+        writer.write({ type: "text-delta", id: "limit", delta: text });
+        writer.write({ type: "text-end", id: "limit" });
+      },
+    }),
+  });
+}
 
 // Only the text of earlier turns is accepted. Tool calls and results are never
 // taken from the browser, so a client can't forge a calculation.
@@ -50,6 +68,12 @@ export async function POST(req: NextRequest) {
 
   const ws = await getWorkspace();
   if (!ws) return jsonError(401, "SIGNED_OUT", "Your session ended. Sign in again.");
+
+  const allowed = await asStudent(guard.db, guard.userId, async (tx) => {
+    const r = await tx.query<{ ok: boolean }>(`select klar.take_assistant_message($1) as ok`, [DAILY_MESSAGES]);
+    return r.rows[0]?.ok === true;
+  });
+  if (!allowed) return reply(LIMIT_REPLY);
 
   const result = streamText({
     model: ASSISTANT_MODEL,

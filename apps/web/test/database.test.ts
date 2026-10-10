@@ -181,6 +181,22 @@ describe("ingest pipeline", () => {
   });
 });
 
+describe("Ask Klar daily limit", () => {
+  const take = async (user: string) => (await as<{ ok: boolean }>(user, `select klar.take_assistant_message(5) as ok`)).rows[0]!.ok;
+
+  it("allows five messages a day per student, then refuses", async () => {
+    const results = [];
+    for (let i = 0; i < 7; i++) results.push(await take(A));
+    expect(results).toEqual([true, true, true, true, true, false, false]);
+    expect(await take(B)).toBe(true);
+  });
+
+  it("keeps the counts out of the student's reach", async () => {
+    await expect(as(A, `select * from private.assistant_usage`)).rejects.toThrow();
+    await expect(as(A, `delete from private.assistant_usage`)).rejects.toThrow();
+  });
+});
+
 describe("deletion", () => {
   it("deletes one student's grade data without touching anyone else's", async () => {
     await as(A, `select public.delete_my_grade_data()`);
@@ -191,9 +207,9 @@ describe("deletion", () => {
   it("removes everything Klar stores when the account is deleted", async () => {
     await as(B, `select public.delete_my_account_data()`);
     const r = await db.query(
-      `select (select count(*)::int from public.courses where user_id = $1) c, (select count(*)::int from public.profiles where id = $1) p, (select count(*)::int from public.user_settings where user_id = $1) s`,
+      `select (select count(*)::int from public.courses where user_id = $1) c, (select count(*)::int from public.profiles where id = $1) p, (select count(*)::int from public.user_settings where user_id = $1) s, (select count(*)::int from private.assistant_usage where user_id = $1) u`,
       [B],
     );
-    expect(r.rows[0]).toEqual({ c: 0, p: 0, s: 0 });
+    expect(r.rows[0]).toEqual({ c: 0, p: 0, s: 0, u: 0 });
   });
 });
