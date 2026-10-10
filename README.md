@@ -18,6 +18,7 @@ Klar turns your Schoology gradebook into one calm dashboard: exact grades, your 
 ![Neon Postgres](https://img.shields.io/badge/Neon-Postgres%20%2B%20Auth-0677ba?logo=postgresql&logoColor=white)
 ![Chrome MV3](https://img.shields.io/badge/Chrome-Manifest%20V3-0677ba?logo=googlechrome&logoColor=white)
 ![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-0b1622?logo=vercel&logoColor=white)
+[![MIT license](https://img.shields.io/badge/License-MIT-0677ba)](LICENSE)
 
 </div>
 
@@ -175,4 +176,4 @@ The Schoology integration was built to Schoology's current page markup and docum
 
 ## License
 
-All rights reserved. No license has been chosen yet, so the code may be read but not reused without permission. Brand assets in `brand/` are original to this project.
+[MIT](LICENSE) © 2026 Aarav Puri
