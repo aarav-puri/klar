@@ -7,7 +7,7 @@ export const env = {
   schoologyKey: process.env.SCHOOLOGY_CONSUMER_KEY ?? "",
   schoologySecret: process.env.SCHOOLOGY_CONSUMER_SECRET ?? "",
   schoologyApiBase: (process.env.SCHOOLOGY_API_BASE ?? "https://api.schoology.com/v1").replace(/\/$/, ""),
-  extensionStoreUrl: process.env.NEXT_PUBLIC_EXTENSION_STORE_URL ?? "",
+  extensionStoreUrl: process.env.NEXT_PUBLIC_EXTENSION_STORE_URL || "https://chromewebstore.google.com/detail/klar-for-schoology/lfdkiindbipcfalgglcneenkephcphil",
   allowSignups: process.env.KLAR_ALLOW_SIGNUPS !== "false",
 };
 

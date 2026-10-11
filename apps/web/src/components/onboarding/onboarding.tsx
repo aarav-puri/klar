@@ -1,6 +1,6 @@
 "use client";
 import { normalizeSchoologyHost } from "@klar/core/protocol";
-import { Check, Download, ExternalLink, Loader2, Monitor, Puzzle, ShieldCheck } from "lucide-react";
+import { Check, ExternalLink, Loader2, Monitor, Puzzle, ShieldCheck } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { isMobileDevice, MOBILE_SYNC_MESSAGE, useIsMobileDevice } from "@/lib/device";
 import { detectExtension } from "@/lib/extension-client";
-import { EXTENSION_RELEASE } from "@/lib/extension-release";
 import { syncErrorCopy, type ErrorCopy } from "@/lib/sync-errors";
 import { runExtensionSync, runOfficialSync, type SyncSummary } from "@/lib/sync-client";
 import { cn } from "@/lib/utils";
@@ -327,7 +326,7 @@ function ExtensionStep({ storeUrl, error, onReady }: { storeUrl: string; error: 
         </div>
       )}
 
-      {state === "missing" && (storeUrl ? <StoreInstall storeUrl={storeUrl} /> : <DownloadInstall />)}
+      {state === "missing" && <StoreInstall storeUrl={storeUrl} />}
     </section>
   );
 }
@@ -347,49 +346,6 @@ function StoreInstall({ storeUrl }: { storeUrl: string }) {
       </InstallStep>
       <ComeBack n={3} />
     </ol>
-  );
-}
-
-/** Until the Chrome Web Store listing is live: the zip from GitHub, loaded unpacked. */
-function DownloadInstall() {
-  const vt = EXTENSION_RELEASE.virusTotal;
-  return (
-    <>
-      <p className="mt-4 rounded-lg border border-line bg-surface-2 px-4 py-3 text-sm text-ink-2">
-        Klar is currently in the process of being added to the Chrome Web Store. Until then, install it directly.
-      </p>
-      <ol className="mt-3 space-y-3">
-        <InstallStep n={1} title="Download Klar">
-          <div className="mt-2 flex flex-wrap items-center gap-3">
-            <Button asChild size="sm">
-              <a href={EXTENSION_RELEASE.downloadUrl} download>
-                <Download /> Download extension
-              </a>
-            </Button>
-            <a href={vt.url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 text-sm font-semibold text-ink-2 hover:text-ink">
-              <ShieldCheck className="size-4 text-success" />
-              VirusTotal: {vt.flagged}/{vt.engines} flagged <ExternalLink className="size-3.5" />
-            </a>
-          </div>
-          <p className="mt-2 text-xs text-ink-3">
-            v{EXTENSION_RELEASE.version} from{" "}
-            <a href={EXTENSION_RELEASE.releaseUrl} target="_blank" rel="noopener noreferrer" className="underline hover:text-ink">
-              GitHub
-            </a>
-            . Unzip it.
-          </p>
-        </InstallStep>
-        <InstallStep n={2} title="Turn on Developer mode">
-          <p className="mt-1 text-sm text-ink-2">
-            Open <code className="rounded bg-surface-2 px-1 text-xs">chrome://extensions</code> in a new tab and switch on Developer mode, top right.
-          </p>
-        </InstallStep>
-        <InstallStep n={3} title="Load unpacked">
-          <p className="mt-1 text-sm text-ink-2">Click Load unpacked and choose the unzipped folder.</p>
-        </InstallStep>
-        <ComeBack n={4} />
-      </ol>
-    </>
   );
 }
 
