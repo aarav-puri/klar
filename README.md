@@ -11,12 +11,12 @@
 
 Klar turns your Schoology gradebook into one calm dashboard: exact grades, your GPA, what-if scores, grade history, and an AI assistant that answers questions about your own grades.
 
-[**Open Klar**](https://useklar.vercel.app) · [Privacy Policy](https://useklar.vercel.app/privacy) · [How it works](#how-it-works) · [Run it locally](#run-it-locally)
+[**Open Klar**](https://useklar.vercel.app) · [Chrome extension](https://chromewebstore.google.com/detail/klar-for-schoology/lfdkiindbipcfalgglcneenkephcphil) · [Privacy Policy](https://useklar.vercel.app/privacy) · [How it works](#how-it-works) · [Run it locally](#run-it-locally)
 
 ![Next.js 16](https://img.shields.io/badge/Next.js-16-0b1622?logo=nextdotjs&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-0677ba?logo=typescript&logoColor=white)
 ![Neon Postgres](https://img.shields.io/badge/Neon-Postgres%20%2B%20Auth-0677ba?logo=postgresql&logoColor=white)
-![Chrome MV3](https://img.shields.io/badge/Chrome-Manifest%20V3-0677ba?logo=googlechrome&logoColor=white)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-Klar%20for%20Schoology-0677ba?logo=googlechrome&logoColor=white)](https://chromewebstore.google.com/detail/klar-for-schoology/lfdkiindbipcfalgglcneenkephcphil)
 ![Deployed on Vercel](https://img.shields.io/badge/Deployed%20on-Vercel-0b1622?logo=vercel&logoColor=white)
 
 </div>
@@ -71,7 +71,7 @@ Klar turns your Schoology gradebook into one calm dashboard: exact grades, your 
 ## How it works
 
 1. **Create a Klar account.** An email and a Klar-only password.
-2. **Add the Chrome extension.** Klar is being added to the Chrome Web Store; until then, [download it from Releases](https://github.com/aarav-puri/klar/releases/latest) ([VirusTotal: 0/65](https://www.virustotal.com/gui/file/1259f083cc7a9f8fcec519f2463a27a0682cd1b6d021c2a8384da505ff32535d)) and load it unpacked. You sign in to Schoology on Schoology's own page, as usual.
+2. **Add the Chrome extension** from the [Chrome Web Store](https://chromewebstore.google.com/detail/klar-for-schoology/lfdkiindbipcfalgglcneenkephcphil). You sign in to Schoology on Schoology's own page, as usual.
 3. **Press Sync.** The extension reads your gradebook and sends it to your Klar account.
 
 Klar never asks for your Schoology password, never reads your cookies, and can't change anything in Schoology. Every student's data is isolated by Postgres row-level security. Details: [docs/SECURITY.md](docs/SECURITY.md).
