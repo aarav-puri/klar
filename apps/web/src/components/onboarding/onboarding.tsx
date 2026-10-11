@@ -1,6 +1,7 @@
 "use client";
 import { normalizeSchoologyHost } from "@klar/core/protocol";
-import { Check, ExternalLink, Loader2, Monitor, Puzzle, ShieldCheck } from "lucide-react";
+import { Check, ExternalLink, Loader2, Monitor, ShieldCheck } from "lucide-react";
+import { ChromeWebStoreIcon } from "@/components/brand/chrome-web-store-icon";
 import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -333,7 +334,7 @@ function StoreInstall({ storeUrl }: { storeUrl: string }) {
       <InstallStep n={1} title="Install Klar for Schoology">
         <Button asChild variant="secondary" size="sm" className="mt-2">
           <a href={storeUrl} target="_blank" rel="noopener noreferrer">
-            <Puzzle /> Open Chrome Web Store <ExternalLink />
+            <ChromeWebStoreIcon /> Open Chrome Web Store <ExternalLink />
           </a>
         </Button>
       </InstallStep>
