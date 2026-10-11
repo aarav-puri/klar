@@ -125,9 +125,6 @@ export function Onboarding({ officialApi, storeUrl, existingHost, initial }: Onb
           {step === "consent" && (
             <section>
               <h1 className="text-2xl font-extrabold tracking-tight">Connect your Schoology</h1>
-              <p className="mt-2 text-ink-2">
-                Sign in to Schoology as usual. Klar never sees your password.
-              </p>
               <div className="mt-5 grid gap-4 sm:grid-cols-2">
                 <div className="rounded-lg border border-line bg-surface p-4">
                   <p className="text-sm font-bold">Reads</p>
@@ -299,7 +296,6 @@ function ExtensionStep({ storeUrl, error, onReady }: { storeUrl: string; error: 
   return (
     <section>
       <h1 className="text-2xl font-extrabold tracking-tight">Add the Klar extension</h1>
-      <p className="mt-2 text-ink-2">It only runs on your Schoology gradebook.</p>
       {error && <ErrorNote error={error} />}
 
       {state === "checking" && (
@@ -379,7 +375,6 @@ function SchoolStep({ method, host, setHost, error, onSubmit }: { method: Method
   return (
     <section>
       <h1 className="text-2xl font-extrabold tracking-tight">What&rsquo;s your school&rsquo;s Schoology address?</h1>
-      <p className="mt-2 text-ink-2">Copy it from your address bar while Schoology is open.</p>
       {error && <ErrorNote error={error} />}
       <form
         className="mt-6"
