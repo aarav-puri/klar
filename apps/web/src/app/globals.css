@@ -445,6 +445,12 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
+  /* Tight tracking pushes the last letter past the box; extend the paint
+     area so it isn't clipped, without moving the text. */
+  padding: 0 0.12em 0.06em 0;
+  margin-right: -0.12em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
 .dark .klar-name-gradient {
   background-image: linear-gradient(100deg, #3d9ad6 0%, #6fbbe8 50%, #9fd3f5 100%);
