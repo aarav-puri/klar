@@ -400,6 +400,13 @@ export interface UnweightedGpa {
   courseCount: number;
 }
 
+/** The A-F letter a course counts as for GPA, or null when it has no grade. */
+export function gpaLetter(c: { percent: number | null; letter: string | null }): string | null {
+  const own = c.letter?.trim().toUpperCase().replace(/[+-]$/, "");
+  const letter = own && own in GPA_POINTS ? own : letterFor(c.percent, DEFAULT_SCALE)?.[0];
+  return letter && letter in GPA_POINTS ? letter : null;
+}
+
 /**
  * Unweighted GPA. Courses without a grade are left out. A course's own letter
  * is used when it is a standard letter; otherwise its percent is mapped with
@@ -408,9 +415,8 @@ export interface UnweightedGpa {
 export function unweightedGpa(courses: { percent: number | null; letter: string | null }[]): UnweightedGpa {
   const points: number[] = [];
   for (const c of courses) {
-    const own = c.letter?.trim().toUpperCase().replace(/[+-]$/, "");
-    const letter = own && own in GPA_POINTS ? own : letterFor(c.percent, DEFAULT_SCALE)?.[0];
-    if (letter && letter in GPA_POINTS) points.push(GPA_POINTS[letter]!);
+    const letter = gpaLetter(c);
+    if (letter) points.push(GPA_POINTS[letter]!);
   }
   if (points.length === 0) return { gpa: null, courseCount: 0 };
   return { gpa: roundTo(points.reduce((s, p) => s + p, 0) / points.length, 2), courseCount: points.length };

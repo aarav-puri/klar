@@ -5,13 +5,14 @@ import {
   type Assignment,
   type Course,
 } from "@klar/core";
-import type { CourseView, SnapshotPoint } from "./types";
+import { EMPTY_PLAN, type CoursePlan, type CourseView, type SnapshotPoint } from "./types";
 
 export function buildCourseView(
   course: Course,
   assignments: Assignment[],
   snapshots: SnapshotPoint[],
   colorIndex: number,
+  plan: CoursePlan = EMPTY_PLAN,
 ): CourseView {
   const calc = computeGrade(assignments, course.config);
   const fromSchoology = course.reportedPercent !== null;
@@ -33,5 +34,6 @@ export function buildCourseView(
     periods: course.periods,
     assignments,
     colorIndex,
+    plan,
   };
 }

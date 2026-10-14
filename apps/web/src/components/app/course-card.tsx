@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { GradeNumeral } from "@/components/ui/grade-numeral";
 import { fmtDay } from "@/lib/format";
+import { GOAL_TONE_CLASS, goalStatus } from "@/lib/insights";
 import type { CourseView } from "@/server/data/types";
 import { ChangeChip } from "./change-chip";
 import { Sparkline } from "./sparkline";
 
 export function CourseCard({ course }: { course: CourseView }) {
   const hasTrend = course.snapshots.filter((s) => s.percent !== null).length >= 2;
+  const goal = goalStatus(course);
   return (
     <Link
       href={`/app/courses/${course.id}`}
@@ -29,6 +31,13 @@ export function CourseCard({ course }: { course: CourseView }) {
         {hasTrend ? <Sparkline points={course.snapshots} className="h-8 w-24 shrink-0" label={`${course.name} trend`} /> : null}
       </div>
 
+      {goal && (
+        <p className="mt-3 flex items-center gap-2 text-xs">
+          <span className="font-semibold text-ink-2">Goal {goal.goalLetter ?? `${goal.goal}%`}</span>
+          <span className={GOAL_TONE_CLASS[goal.tone]}>{goal.label}</span>
+        </p>
+      )}
+
       <div className="mt-4 flex min-h-5 flex-wrap items-center gap-x-3 gap-y-1 border-t border-line pt-3 text-xs text-ink-2">
         {course.change ? (
           <span className="flex items-center gap-1.5">
@@ -47,3 +56,4 @@ export function CourseCard({ course }: { course: CourseView }) {
     </Link>
   );
 }
+

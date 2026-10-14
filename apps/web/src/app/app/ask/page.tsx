@@ -16,7 +16,7 @@ function suggestionsFor(ws: NonNullable<Awaited<ReturnType<typeof getWorkspace>>
   return [
     next ? `What do I need on ${next.title} to keep my grade in ${next.courseName}?` : "What do I need on my next test to keep an A?",
     lowest ? `How can I bring up my grade in ${lowest.name}?` : "Which class should I focus on?",
-    "What changed in my grades this week?",
+    ws.courses.some((c) => c.plan.goalPercent !== null) ? "Am I on track for my goals?" : "What changed in my grades this week?",
     "Which assignments are missing or late?",
   ];
 }

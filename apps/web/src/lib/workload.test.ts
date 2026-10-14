@@ -20,6 +20,8 @@ const row = (p: Partial<AssignmentRow>): AssignmentRow => ({
   url: null,
   percent: null,
   colorIndex: 0,
+  swing: null,
+  recovery: null,
   ...p,
 });
 

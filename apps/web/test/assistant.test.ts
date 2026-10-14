@@ -52,6 +52,19 @@ const ws: Workspace = {
 };
 
 describe("Ask Klar", () => {
+  it("includes the student's own goal and level, with the exact path to the goal", () => {
+    const planned: Workspace = { ...ws, courses: [{ ...course, plan: { goalPercent: 90, level: null } }] };
+    const ctx = JSON.parse(buildContext(planned));
+    const plan = ctx.courses[0].studentPlan;
+    expect(plan.level).toBe("ap");
+    expect(plan.levelSetByStudent).toBe(false);
+    expect(plan.goalPercent).toBe(90);
+    // 84 now; one 100-point test left. 90 needs tests at (90 - 36) / 0.6 = 90%, so 100 on it.
+    expect(plan.goalPath.neededAverageOnRemaining).toBe(100);
+    expect(plan.goalPath.achievable).toBe(true);
+    expect(ctx.weightedGpa.value).toBe(4);
+  });
+
   it("gives the model every course, category and assignment, but not empty categories", () => {
     const ctx = JSON.parse(buildContext(ws));
     expect(ctx.unweightedGpa.value).toBe(3);

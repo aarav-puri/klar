@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ChangeChip } from "@/components/app/change-chip";
+import { ChangeExplainer } from "@/components/app/change-explainer";
 import { CourseDetail } from "@/components/app/course-detail";
 import { Badge } from "@/components/ui/badge";
 import { GradeNumeral } from "@/components/ui/grade-numeral";
@@ -69,6 +70,8 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
           )}
         </div>
       </header>
+
+      <ChangeExplainer course={course} />
 
       {differs && (
         <p className="mb-6 rounded-md bg-surface-2 px-4 py-3 text-sm text-ink-2">

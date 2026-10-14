@@ -1,4 +1,4 @@
-import { LayoutDashboard, MessageCircle, Settings, type LucideIcon } from "lucide-react";
+import { Crosshair, LayoutDashboard, MessageCircle, Settings, type LucideIcon } from "lucide-react";
 
 export interface NavItem {
   href: string;
@@ -8,6 +8,7 @@ export interface NavItem {
 
 export const NAV: NavItem[] = [
   { href: "/app", label: "Overview", icon: LayoutDashboard },
+  { href: "/app/planner", label: "Planner", icon: Crosshair },
   { href: "/app/ask", label: "Ask Klar", icon: MessageCircle },
   { href: "/app/settings", label: "Settings", icon: Settings },
 ];

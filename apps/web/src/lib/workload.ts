@@ -1,4 +1,4 @@
-import type { Assignment } from "@klar/core";
+import { assignmentSwing, isRemaining, missingRecovery, type Assignment, type MissingRecovery } from "@klar/core";
 import type { CourseView } from "@/server/data/types";
 
 export interface AssignmentRow extends Assignment {
@@ -7,6 +7,10 @@ export interface AssignmentRow extends Assignment {
   categoryName: string | null;
   percent: number | null;
   colorIndex: number;
+  /** Unscored work only: points between a zero and full marks on the course grade (Klar's math). */
+  swing: number | null;
+  /** Missing work only: what turning it in, or a zero, would do to the grade. */
+  recovery: MissingRecovery | null;
 }
 
 export function flattenAssignments(courses: CourseView[]): AssignmentRow[] {
@@ -19,6 +23,8 @@ export function flattenAssignments(courses: CourseView[]): AssignmentRow[] {
       colorIndex: c.colorIndex,
       categoryName: a.categoryId ? (cats.get(a.categoryId) ?? null) : null,
       percent: a.earned !== null && a.possible ? (a.earned / a.possible) * 100 : null,
+      swing: isRemaining(a) ? (assignmentSwing(c.assignments, c.config, a.id)?.swing ?? null) : null,
+      recovery: a.status === "missing" ? missingRecovery(c.assignments, c.config, a.id) : null,
     }));
   });
 }
