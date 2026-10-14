@@ -5,7 +5,6 @@ import { Segmented } from "@/components/ui/segmented";
 import { awaitingGrade, missing, upcoming, type AssignmentRow } from "@/lib/workload";
 import { AssignmentLine } from "./assignment-line";
 import { AssignmentsTable } from "./assignments-table";
-import { CrunchRadar } from "./crunch-radar";
 import { MonthCalendar } from "./month-calendar";
 
 type View = "board" | "list" | "calendar";
@@ -38,7 +37,6 @@ export function AssignmentsView({ rows, nowIso }: { rows: AssignmentRow[]; nowIs
       />
       {view === "board" && (
         <div className="grid gap-6 lg:grid-cols-2">
-          <CrunchRadar rows={rows} nowIso={nowIso} />
           <Group title="Due in the next 2 weeks" empty="Nothing due soon." rows={groups.upcoming} mode="due" now={now} />
           <Group
             title="Missing"

@@ -13,7 +13,7 @@ export default async function PlannerPage() {
   const ws = (await getWorkspace())!;
   return (
     <div>
-      <PageHeader title="Planner" description="Goals and GPA, worked out from your real grades." />
+      <PageHeader title="Planner" />
       {ws.courses.length === 0 ? (
         <Panel>
           <EmptyState
