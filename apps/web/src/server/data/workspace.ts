@@ -9,7 +9,7 @@ import { cache } from "react";
 import { asStudent, getDb } from "../db";
 import { iso, num } from "../ingest";
 import { getViewer } from "../viewer";
-import type { ConnectionView, SnapshotPoint, SyncRunView, Workspace } from "./types";
+import type { ConnectionView, CoursePlan, SnapshotPoint, SyncRunView, Workspace } from "./types";
 import { buildCourseView } from "./view";
 
 /** Everything the app shell renders for the current viewer, or null when signed out. */
@@ -42,11 +42,15 @@ async function liveWorkspace(userId: string, fullName: string | null): Promise<W
       rounding_decimals: number | null;
       categories: { source_id: string; name: string; weight: number | null }[];
       periods: { source_id: string; title: string }[];
+      goal_percent: unknown;
+      level: CoursePlan["level"];
     }>(
       `select c.id, c.name, c.teacher, c.section_name, c.reported_percent, c.reported_letter, c.grading_method, c.method_source, c.rounding_decimals,
               coalesce((select json_agg(json_build_object('source_id', k.source_id, 'name', k.name, 'weight', k.weight) order by k.source_id) from public.grading_categories k where k.course_id = c.id), '[]') as categories,
-              coalesce((select json_agg(json_build_object('source_id', p.source_id, 'title', p.title) order by p.source_id) from public.grading_periods p where p.course_id = c.id), '[]') as periods
-         from public.courses c where c.user_id = $1 and c.archived = false order by c.name`,
+              coalesce((select json_agg(json_build_object('source_id', p.source_id, 'title', p.title) order by p.source_id) from public.grading_periods p where p.course_id = c.id), '[]') as periods,
+              cp.goal_percent, cp.level
+         from public.courses c left join public.course_plans cp on cp.course_id = c.id
+        where c.user_id = $1 and c.archived = false order by c.name`,
       [userId],
     );
     const assignments = await q<{
@@ -127,7 +131,8 @@ async function liveWorkspace(userId: string, fullName: string | null): Promise<W
         }),
         periods: r.periods.map((p) => ({ id: p.source_id, title: p.title })),
       };
-      return buildCourseView(course, byCourse.get(r.id) ?? [], snapsByCourse.get(r.id) ?? [], i);
+      const plan: CoursePlan = { goalPercent: num(r.goal_percent), level: r.level };
+      return buildCourseView(course, byCourse.get(r.id) ?? [], snapsByCourse.get(r.id) ?? [], i, plan);
     });
 
     return {

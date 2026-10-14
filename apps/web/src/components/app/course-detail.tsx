@@ -8,7 +8,9 @@ import type { CourseView } from "@/server/data/types";
 import { byMostRecentScore, type AssignmentRow } from "@/lib/workload";
 import { AssignmentsTable } from "./assignments-table";
 import { CategoryBreakdown } from "./category-breakdown";
+import { GoalPanel } from "./goal-panel";
 import { HistoryChart } from "./history-chart";
+import { PointsBreakdown } from "./points-breakdown";
 import { WhatIfCalculator } from "./what-if";
 
 type Tab = "assignments" | "what-if" | "history";
@@ -42,16 +44,25 @@ export function CourseDetail({ course, rows, nowIso, initialTab }: { course: Cou
       />
 
       {tab === "assignments" && (
-        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_300px]">
+        <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_320px]">
           <Panel className="min-w-0">
             <PanelHeader title="Assignments" />
             <AssignmentsTable rows={rows} nowIso={nowIso} />
           </Panel>
           <div className="space-y-6">
             <Panel>
+              <GoalPanel key={course.id} course={course} />
+            </Panel>
+            <Panel>
               <PanelHeader title="Categories" />
               <CategoryBreakdown result={result} method={course.config.method} />
             </Panel>
+            {result.rawPercent !== null && (
+              <Panel>
+                <PanelHeader title="Where your points went" />
+                <PointsBreakdown course={course} result={result} />
+              </Panel>
+            )}
           </div>
         </div>
       )}

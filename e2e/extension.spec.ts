@@ -293,9 +293,9 @@ test("full flow: create an account, connect through the extension, recently grad
   await expect(page.getByRole("heading", { name: /Due in the next 2 weeks/ })).toBeVisible();
   await expect(page.getByRole("heading", { name: /Recently graded/ })).toHaveCount(0);
 
-  // Navigation is Overview, Ask Klar and Settings.
+  // Navigation is Overview, Planner, Ask Klar and Settings.
   const nav = page.getByRole("navigation").filter({ visible: true }).first();
-  for (const name of ["Overview", "Ask Klar", "Settings"]) await expect(nav.getByRole("link", { name, exact: true })).toBeVisible();
+  for (const name of ["Overview", "Planner", "Ask Klar", "Settings"]) await expect(nav.getByRole("link", { name, exact: true })).toBeVisible();
   for (const name of ["Courses", "Assignments", "Grade history", "What-if", "Calendar"]) await expect(nav.getByRole("link", { name, exact: true })).toHaveCount(0);
   await nav.getByRole("link", { name: /Ask Klar/ }).click();
   await expect(page.getByRole("heading", { name: "Ask Klar" })).toBeVisible({ timeout: 30_000 });

@@ -10,6 +10,7 @@ vi.mock("server-only", () => ({}));
 
 const { memoryDb, asStudent } = await import("@/server/db");
 const { ingestPayload, IngestError } = await import("@/server/ingest");
+const { planInput, savePlan } = await import("@/server/plans");
 
 type Db = Awaited<ReturnType<typeof memoryDb>>["db"];
 let db: Db;
@@ -197,10 +198,38 @@ describe("Ask Klar daily limit", () => {
   });
 });
 
+describe("course plans", () => {
+  const courseOf = async (user: string) => (await db.query<{ id: string }>(`select id from public.courses where user_id = $1 order by name limit 1`, [user])).rows[0]!.id;
+  const plan = (courseId: string, goalPercent: number | null) => planInput.parse({ courseId, goalPercent, level: "honors" });
+
+  it("saves and updates a student's plan for their own course", async () => {
+    const course = await courseOf(A);
+    expect(await asStudent(db, A, (tx) => savePlan(tx, A, plan(course, 90)))).toBe(true);
+    expect(await asStudent(db, A, (tx) => savePlan(tx, A, plan(course, 93)))).toBe(true);
+    const rows = (await as<{ goal_percent: string; level: string }>(A, `select goal_percent, level from public.course_plans where course_id = $1`, [course])).rows;
+    expect(rows).toEqual([{ goal_percent: "93.00", level: "honors" }]);
+  });
+
+  it("refuses a plan for someone else's course", async () => {
+    const theirs = await courseOf(B);
+    expect(await asStudent(db, A, (tx) => savePlan(tx, A, plan(theirs, 90)))).toBe(false);
+    // Straight SQL is refused by row-level security too.
+    await expect(as(A, `insert into public.course_plans (course_id, user_id, goal_percent) values ($1, $2, 90)`, [theirs, A])).rejects.toThrow(/row-level security/);
+    expect((await as(B, `select * from public.course_plans`)).rows).toEqual([]);
+  });
+
+  it("rejects out-of-range values", () => {
+    expect(() => planInput.parse({ courseId: "00000000-0000-4000-8000-000000000000", goalPercent: 200, level: null })).toThrow();
+    expect(() => planInput.parse({ courseId: "not-a-uuid", goalPercent: 90, level: null })).toThrow();
+    expect(() => planInput.parse({ courseId: "00000000-0000-4000-8000-000000000000", goalPercent: 90, level: "gifted" })).toThrow();
+  });
+});
+
 describe("deletion", () => {
   it("deletes one student's grade data without touching anyone else's", async () => {
     await as(A, `select public.delete_my_grade_data()`);
     expect((await db.query(`select count(*)::int n from public.courses where user_id = $1`, [A])).rows).toEqual([{ n: 0 }]);
+    expect((await db.query(`select count(*)::int n from public.course_plans where user_id = $1`, [A])).rows).toEqual([{ n: 0 }]);
     expect((await db.query<{ n: number }>(`select count(*)::int n from public.courses where user_id = $1`, [B])).rows[0]!.n).toBeGreaterThan(0);
   });
 

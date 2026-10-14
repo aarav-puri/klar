@@ -1,9 +1,19 @@
-import type { Assignment, Change, GradingConfig, GradingPeriod } from "@klar/core";
+import type { Assignment, Change, CourseLevel, GradingConfig, GradingPeriod } from "@klar/core";
 
 export interface SnapshotPoint {
   capturedAt: string;
   percent: number | null;
 }
+
+/** The student's own settings for a course. Never sent to Schoology. */
+export interface CoursePlan {
+  /** Target course grade in percent. */
+  goalPercent: number | null;
+  /** Chosen course level, or null to use the level detected from the name. */
+  level: CourseLevel | null;
+}
+
+export const EMPTY_PLAN: CoursePlan = { goalPercent: null, level: null };
 
 export interface CourseView {
   id: string;
@@ -25,6 +35,7 @@ export interface CourseView {
   periods: GradingPeriod[];
   assignments: Assignment[];
   colorIndex: number;
+  plan: CoursePlan;
 }
 
 export interface ConnectionView {

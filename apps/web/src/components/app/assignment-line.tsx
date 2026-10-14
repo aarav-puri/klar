@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { dueLabel, fmtDay, fmtPoints, relativeTime } from "@/lib/format";
+import { dueLabel, fmtDay, fmtDelta, fmtPoints, relativeTime } from "@/lib/format";
 import type { AssignmentRow } from "@/lib/workload";
 import { cn } from "@/lib/utils";
 
@@ -34,9 +34,16 @@ export function AssignmentLine({ row, mode, now }: { row: AssignmentRow; mode: "
             )}
           </div>
         ) : (
-          <p className={cn("shrink-0 text-xs font-semibold", mode === "missing" ? "text-danger" : "text-ink-2")}>
-            {mode === "missing" ? "Missing" : row.dueAt ? dueLabel(row.dueAt, now) : ""}
-          </p>
+          mode === "missing" && row.recovery ? (
+            <div className="shrink-0 text-right" title={`A zero would change the grade by ${fmtDelta(row.recovery.ifZero)} pts`}>
+              <p className="tabular text-xs font-bold text-success">{fmtDelta(row.recovery.ifFull)} pts if turned in</p>
+              <p className="tabular text-2xs font-semibold text-danger">{fmtDelta(row.recovery.ifZero)} if it becomes a zero</p>
+            </div>
+          ) : (
+            <p className={cn("shrink-0 text-xs font-semibold", mode === "missing" ? "text-danger" : "text-ink-2")}>
+              {mode === "missing" ? "Missing" : row.dueAt ? dueLabel(row.dueAt, now) : ""}
+            </p>
+          )
         )}
       </Link>
     </li>

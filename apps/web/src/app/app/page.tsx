@@ -4,11 +4,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AssignmentsView } from "@/components/app/assignments-view";
 import { CourseCard } from "@/components/app/course-card";
+import { FocusQueue } from "@/components/app/focus-queue";
 import { Greeting } from "@/components/app/greeting";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Panel } from "@/components/ui/panel";
 import { Tooltip } from "@/components/ui/tooltip";
+import { focusQueue } from "@/lib/insights";
 import { flattenAssignments, needsAttention, upcoming } from "@/lib/workload";
 import { getWorkspace } from "@/server/data/workspace";
 
@@ -42,6 +44,7 @@ export default async function OverviewPage() {
   const gpa = unweightedGpa(ws.courses);
   const dueSoon = upcoming(rows, now, 7);
   const attention = needsAttention(ws.courses);
+  const focus = focusQueue(rows, ws.courses, now);
   const changes = ws.courses.filter((c) => c.change && Date.parse(c.change.since) >= now.getTime() - 7 * 86_400_000).length;
 
   return (
@@ -85,6 +88,8 @@ export default async function OverviewPage() {
           </ul>
         </section>
       )}
+
+      <FocusQueue items={focus} now={now} />
 
       <section aria-labelledby="courses-h">
         <h2 id="courses-h" className="mb-4 text-2xl font-extrabold tracking-tight">Courses</h2>
