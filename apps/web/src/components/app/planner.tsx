@@ -42,12 +42,9 @@ export function Planner({ courses }: { courses: CourseView[] }) {
       <GpaLab courses={live} onLevel={(id, level) => update(id, { level })} />
       <section aria-labelledby="goals-h">
         <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
-          <div>
-            <h2 id="goals-h" className="text-2xl font-extrabold tracking-tight">
-              Goals
-            </h2>
-            <p className="mt-0.5 text-sm text-ink-2">Pick a goal for each class and Klar works out the path.</p>
-          </div>
+          <h2 id="goals-h" className="text-2xl font-extrabold tracking-tight">
+            Goals
+          </h2>
           {saving && <span className="text-xs text-ink-3">Saving</span>}
         </div>
         <div className="grid gap-4 xl:grid-cols-2">
@@ -84,14 +81,9 @@ function GpaLab({ courses, onLevel }: { courses: CourseView[]; onLevel: (id: str
 
   return (
     <section aria-labelledby="gpa-h">
-      <div className="mb-4 flex flex-wrap items-end justify-between gap-2">
-        <div>
-          <h2 id="gpa-h" className="text-2xl font-extrabold tracking-tight">
-            GPA lab
-          </h2>
-          <p className="mt-0.5 text-sm text-ink-2">Set each class&rsquo;s level, then try letters to see where your GPA lands.</p>
-        </div>
-      </div>
+      <h2 id="gpa-h" className="mb-4 text-2xl font-extrabold tracking-tight">
+        GPA lab
+      </h2>
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <Panel className="min-w-0">
           <div className="grid grid-cols-2 divide-x divide-line border-b border-line">
@@ -165,9 +157,9 @@ function GpaLab({ courses, onLevel }: { courses: CourseView[]; onLevel: (id: str
         </Panel>
 
         <Panel>
-          <PanelHeader title="Closest to moving your GPA" description="Plus and minus don't count, so only these edges matter." />
+          <PanelHeader title="Closest to moving your GPA" />
           {movers.length === 0 ? (
-            <p className="border-t border-line px-5 py-4 text-sm text-ink-2">No class is near a letter edge right now. Your GPA is steady.</p>
+            <p className="border-t border-line px-5 py-4 text-sm text-ink-2">No class is near a letter edge.</p>
           ) : (
             <ul className="divide-y divide-line border-t border-line">
               {movers.slice(0, 5).map((m) => (
@@ -308,7 +300,7 @@ function LetterEdge({ percent, scale }: { percent: number | null; scale: CourseV
           <strong className="tabular text-ink">{pos.next.gap.toFixed(1)} pts</strong> from {article(pos.next.letter)} {pos.next.letter}
         </>
       )}
-      . Set a goal to see the path.
+      .
     </p>
   );
 }
