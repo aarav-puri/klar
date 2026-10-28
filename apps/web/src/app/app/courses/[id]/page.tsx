@@ -24,7 +24,6 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
   const course = ws.courses.find((c) => c.id === id);
   if (!course) notFound();
   const rows = flattenAssignments([course]);
-  const differs = course.percentSource === "schoology" && course.calculatedPercent !== null && course.percent !== null && Math.abs(course.calculatedPercent - course.percent) >= 0.05;
   const estimated = course.config.methodSource !== "schoology";
 
   return (
@@ -72,12 +71,6 @@ export default async function CoursePage({ params, searchParams }: { params: Pro
       </header>
 
       <ChangeExplainer course={course} />
-
-      {differs && (
-        <p className="mb-6 rounded-md bg-surface-2 px-4 py-3 text-sm text-ink-2">
-          Klar&rsquo;s math: {course.calculatedPercent!.toFixed(2)}%. Schoology may hide some settings.
-        </p>
-      )}
 
       <CourseDetail course={course} rows={rows} nowIso={ws.generatedAt} initialTab={tab === "what-if" || tab === "history" ? tab : "assignments"} />
     </div>

@@ -1,7 +1,7 @@
 import { defaultConfig, type Assignment } from "@klar/core";
 import { describe, expect, it } from "vitest";
 import { buildCourseView } from "@/server/data/view";
-import { focusQueue, goalStatus, gpaMovers } from "./insights";
+import { focusQueue, goalStatus } from "./insights";
 import { flattenAssignments } from "./workload";
 
 const now = new Date("2026-10-14T12:00:00Z");
@@ -86,19 +86,5 @@ describe("goal status", () => {
 
   it("is honest when posted work can't get there", () => {
     expect(goalStatus(course("x", [...graded, upcoming], { goalPercent: 99, level: null }))!.tone).toBe("danger");
-  });
-});
-
-describe("GPA movers", () => {
-  it("flags classes just under or just over a GPA letter edge", () => {
-    const near = course("near", graded, undefined, 88.5);
-    const edge = course("edge", graded, undefined, 80.6);
-    const safe = course("safe", graded, undefined, 95);
-    const movers = gpaMovers([near, edge, safe]);
-    // Gaps run to 89.5 and 79.5, the grades that round to an A and a B.
-    expect(movers.map((m) => [m.course.id, m.kind, m.to, m.gap])).toEqual([
-      ["near", "reach", "A", 1],
-      ["edge", "risk", "C", expect.closeTo(1.1, 5)],
-    ]);
   });
 });

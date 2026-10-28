@@ -1,13 +1,10 @@
 import {
   computeGrade,
   cutoffFloor,
-  detectLevel,
   goalPath,
-  gpaLetter,
   letterFor,
   letterPosition,
   requiredScore,
-  type CourseLevel,
   type GoalPath,
 } from "@klar/core";
 import type { CourseView } from "@/server/data/types";
@@ -98,47 +95,4 @@ export function goalStatus(course: CourseView): GoalStatus | null {
   if (!path.achievable) return { ...base, tone: "danger", label: "Out of reach on posted work" };
   if (path.atCurrentPace !== null && path.atCurrentPace >= target) return { ...base, tone: "success", label: "On track" };
   return { ...base, tone: path.neededAverage > 95 ? "warning" : "brand", label: `Need ${Math.ceil(path.neededAverage)}% avg` };
-}
-
-export function effectiveLevel(course: Pick<CourseView, "name" | "plan">): CourseLevel {
-  return course.plan.level ?? detectLevel(course.name);
-}
-
-/** GPA letter boundaries (A from 90, B from 80, ...), matching how unweighted GPA reads letters. */
-const GPA_CUTS: [string, number][] = [
-  ["A", 90],
-  ["B", 80],
-  ["C", 70],
-  ["D", 60],
-];
-
-export interface GpaMover {
-  course: CourseView;
-  kind: "reach" | "risk";
-  /** Grade points to the next GPA letter (reach) or above the current one's floor (risk). */
-  gap: number;
-  from: string;
-  to: string;
-}
-
-/**
- * The courses closest to changing GPA: a little higher and they go up a
- * letter, a little lower and they drop one.
- */
-export function gpaMovers(courses: CourseView[], { reach = 3, risk = 1.5 } = {}): GpaMover[] {
-  const out: GpaMover[] = [];
-  for (const c of courses) {
-    if (c.percent === null) continue;
-    const letter = gpaLetter(c);
-    if (!letter) continue;
-    const i = GPA_CUTS.findIndex(([l]) => l === letter);
-    const up = i === -1 ? GPA_CUTS.at(-1)! : i > 0 ? GPA_CUTS[i - 1]! : null;
-    const toUp = up ? cutoffFloor(up[1]) - c.percent : null;
-    if (up && toUp !== null && toUp > 0 && toUp <= reach) out.push({ course: c, kind: "reach", gap: toUp, from: letter, to: up[0] });
-    const floor = i === -1 ? null : GPA_CUTS[i]!;
-    const below = i === -1 ? null : (GPA_CUTS[i + 1]?.[0] ?? "F");
-    const aboveFloor = floor ? c.percent - cutoffFloor(floor[1]) : null;
-    if (floor && below && aboveFloor !== null && aboveFloor >= 0 && aboveFloor <= risk) out.push({ course: c, kind: "risk", gap: aboveFloor, from: letter, to: below });
-  }
-  return out.sort((a, b) => a.gap - b.gap);
 }
