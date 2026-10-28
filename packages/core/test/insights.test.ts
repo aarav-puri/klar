@@ -120,9 +120,10 @@ describe("goals", () => {
   });
 
   it("places a grade between letters", () => {
-    expect(letterPosition(84, DEFAULT_SCALE)).toEqual({ letter: "B", cushion: 1, next: { letter: "B+", min: 87, gap: 3 } });
+    expect(letterPosition(84, DEFAULT_SCALE)).toEqual({ letter: "B", cushion: 4.5, next: { letter: "A", min: 90, gap: 5.5 } });
     expect(letterPosition(98, DEFAULT_SCALE)!.next).toBeNull();
-    expect(letterPosition(50, DEFAULT_SCALE)).toEqual({ letter: "F", cushion: null, next: { letter: "D-", min: 60, gap: 10 } });
+    expect(letterPosition(50, DEFAULT_SCALE)).toEqual({ letter: "F", cushion: null, next: { letter: "D", min: 60, gap: 9.5 } });
+    expect(letterPosition(89.5, DEFAULT_SCALE)).toEqual({ letter: "A", cushion: 0, next: null });
     expect(letterPosition(null, DEFAULT_SCALE)).toBeNull();
   });
 });

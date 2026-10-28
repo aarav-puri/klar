@@ -85,7 +85,7 @@ export function buildContext(ws: Workspace): string {
     today: ws.generatedAt,
     student: ws.displayName ?? ws.fullName,
     lastSync: ws.connection?.lastSyncAt ?? null,
-    unweightedGpa: { value: gpa.gpa, gradedCourses: gpa.courseCount, scale: "A=4, B=3, C=2, D=1, F=0; plus/minus ignored" },
+    unweightedGpa: { value: gpa.gpa, gradedCourses: gpa.courseCount, scale: "A=4, B=3, C=2, D=1, F=0" },
     weightedGpa: {
       value: weightedGpa(ws.courses.map((c) => ({ percent: c.percent, letter: c.letter, level: c.plan.level ?? detectLevel(c.name) }))).gpa,
       scale: "Unweighted points plus 0.5 for honors and 1.0 for AP/IB, no bonus on an F",

@@ -6,22 +6,14 @@ import type {
 } from "./types";
 
 /**
- * Common US letter scale. Used only when the course does not expose its own
- * scale, and always labelled as an assumption in the UI.
+ * Ten-point letter scale with no plus or minus. Used only when the course does
+ * not expose its own scale, and always labelled as an assumption in the UI.
  */
 export const DEFAULT_SCALE: LetterCutoff[] = [
-  { letter: "A+", min: 97 },
-  { letter: "A", min: 93 },
-  { letter: "A-", min: 90 },
-  { letter: "B+", min: 87 },
-  { letter: "B", min: 83 },
-  { letter: "B-", min: 80 },
-  { letter: "C+", min: 77 },
-  { letter: "C", min: 73 },
-  { letter: "C-", min: 70 },
-  { letter: "D+", min: 67 },
-  { letter: "D", min: 63 },
-  { letter: "D-", min: 60 },
+  { letter: "A", min: 90 },
+  { letter: "B", min: 80 },
+  { letter: "C", min: 70 },
+  { letter: "D", min: 60 },
   { letter: "F", min: 0 },
 ];
 
@@ -44,11 +36,23 @@ export function roundTo(value: number, decimals: number): number {
   return Math.round((value + Number.EPSILON) * factor) / factor;
 }
 
+/**
+ * The lowest percent that earns a cutoff once rounded to a whole number, the
+ * way schools round report cards: 89.5 earns a 90 cutoff, 89.49 does not.
+ */
+export function cutoffFloor(min: number): number {
+  return Math.ceil(min) - 0.5;
+}
+
+export function meetsCutoff(percent: number, min: number): boolean {
+  return percent + 1e-9 >= cutoffFloor(min);
+}
+
 export function letterFor(percent: number | null, scale: LetterCutoff[]): string | null {
   if (percent === null || !Number.isFinite(percent) || scale.length === 0) return null;
   const sorted = [...scale].sort((a, b) => b.min - a.min);
   for (const cutoff of sorted) {
-    if (percent >= cutoff.min) return cutoff.letter;
+    if (meetsCutoff(percent, cutoff.min)) return cutoff.letter;
   }
   return sorted[sorted.length - 1]?.letter ?? null;
 }
