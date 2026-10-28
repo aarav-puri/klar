@@ -87,7 +87,7 @@ function GpaLab({ courses, onLevel }: { courses: CourseView[]; onLevel: (id: str
       <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
         <Panel className="min-w-0">
           <div className="grid grid-cols-2 divide-x divide-line border-b border-line">
-            <GpaTile label="Unweighted" tip="4.0 scale. A=4, B=3, C=2, D=1. Plus and minus don't count." value={real.un} sim={simulating ? simulated.un : null} />
+            <GpaTile label="Unweighted" tip="4.0 scale. A=4, B=3, C=2, D=1, F=0." value={real.un} sim={simulating ? simulated.un : null} />
             <GpaTile label="Weighted" tip="Adds 0.5 for Honors and 1.0 for AP or IB, except on an F. Schools vary, so check yours." value={real.w} sim={simulating ? simulated.w : null} />
           </div>
           <div className="hidden grid-cols-[minmax(0,1fr)_9.5rem_6.5rem_5.5rem] gap-3 border-b border-line px-5 py-2 text-xs font-semibold text-ink-2 sm:grid">

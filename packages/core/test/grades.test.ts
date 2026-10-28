@@ -27,7 +27,7 @@ describe("total points", () => {
     const r = computeGrade([a({ earned: 9, possible: 10 }), a({ earned: 18, possible: 20 }), a({ earned: null, possible: 10 })], defaultConfig());
     expect(r.percent).toBe(90);
     expect(r.gradedCount).toBe(2);
-    expect(r.letter).toBe("A-");
+    expect(r.letter).toBe("A");
   });
 
   it("returns null with no graded work instead of 0", () => {
@@ -61,7 +61,7 @@ describe("total points", () => {
     // 89.995 should round half-up to 90.00
     const r = computeGrade([a({ earned: 89.995, possible: 100 })], defaultConfig({ roundingDecimals: 2 }));
     expect(r.percent).toBe(90);
-    expect(r.letter).toBe("A-");
+    expect(r.letter).toBe("A");
     const unrounded = computeGrade([a({ earned: 2, possible: 3 })], defaultConfig({ roundingDecimals: null }));
     expect(unrounded.percent).toBeCloseTo(66.6667, 3);
     expect(unrounded.assumptions.join(" ")).toMatch(/Rounding rule unknown/);
@@ -186,10 +186,20 @@ describe("what-if", () => {
 
 describe("letters and helpers", () => {
   it("maps percentages to letters using inclusive minimums", () => {
-    expect(letterFor(93, DEFAULT_SCALE)).toBe("A");
-    expect(letterFor(92.99, DEFAULT_SCALE)).toBe("A-");
+    expect(letterFor(90, DEFAULT_SCALE)).toBe("A");
+    expect(letterFor(85, DEFAULT_SCALE)).toBe("B");
+    expect(letterFor(75, DEFAULT_SCALE)).toBe("C");
+    expect(letterFor(65, DEFAULT_SCALE)).toBe("D");
     expect(letterFor(0, DEFAULT_SCALE)).toBe("F");
     expect(letterFor(null, DEFAULT_SCALE)).toBeNull();
+  });
+
+  it("rounds a grade up to the letter it reaches", () => {
+    expect(letterFor(89.5, DEFAULT_SCALE)).toBe("A");
+    expect(letterFor(89.49, DEFAULT_SCALE)).toBe("B");
+    expect(letterFor(79.5, DEFAULT_SCALE)).toBe("B");
+    expect(letterFor(59.5, DEFAULT_SCALE)).toBe("D");
+    expect(letterFor(59.4, DEFAULT_SCALE)).toBe("F");
   });
 
   it("rounds half-up", () => {

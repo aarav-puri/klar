@@ -61,8 +61,9 @@ describe("focus queue", () => {
   it("says what score keeps the current letter", () => {
     const keep = items[0]!.keep!;
     expect(keep.letter).toBe("A");
-    // Keeping 93 needs tests at (93 - 30) / 0.7 = 90%, so 180 of 200 test points: 90 on this one.
-    expect(keep.needed).toBeCloseTo(90, 0);
+    // An A holds down to 89.5, which rounds to 90. That needs tests at (89.5 - 30) / 0.7 = 85%,
+    // so 170 of 200 test points: 80 on this one.
+    expect(keep.needed).toBeCloseTo(80, 1);
     expect(keep.achievable).toBe(true);
   });
 });
@@ -94,9 +95,10 @@ describe("GPA movers", () => {
     const edge = course("edge", graded, undefined, 80.6);
     const safe = course("safe", graded, undefined, 95);
     const movers = gpaMovers([near, edge, safe]);
-    expect(movers.map((m) => [m.course.id, m.kind, m.to])).toEqual([
-      ["edge", "risk", "C"],
-      ["near", "reach", "A"],
+    // Gaps run to 89.5 and 79.5, the grades that round to an A and a B.
+    expect(movers.map((m) => [m.course.id, m.kind, m.to, m.gap])).toEqual([
+      ["near", "reach", "A", 1],
+      ["edge", "risk", "C", expect.closeTo(1.1, 5)],
     ]);
   });
 });

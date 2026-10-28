@@ -1,4 +1,4 @@
-import { computeGrade, countedPoints, GPA_POINTS, gpaLetter, type GradeResult } from "./grades";
+import { computeGrade, countedPoints, cutoffFloor, GPA_POINTS, gpaLetter, meetsCutoff, type GradeResult } from "./grades";
 import type { Assignment, GradingConfig, LetterCutoff } from "./types";
 
 /**
@@ -189,7 +189,7 @@ export function goalPath(assignments: Assignment[], config: GradingConfig, targe
 
 export interface LetterPosition {
   letter: string;
-  /** Points above the current letter's cutoff. Null for the lowest letter. */
+  /** Points above the lowest percent that still rounds to the current letter. Null for the lowest letter. */
   cushion: number | null;
   /** The next letter up and how far away it is. Null at the top. */
   next: { letter: string; min: number; gap: number } | null;
@@ -198,14 +198,14 @@ export interface LetterPosition {
 export function letterPosition(percent: number | null, scale: LetterCutoff[]): LetterPosition | null {
   if (percent === null || scale.length === 0) return null;
   const sorted = [...scale].sort((a, b) => b.min - a.min);
-  const i = sorted.findIndex((c) => percent >= c.min);
+  const i = sorted.findIndex((c) => meetsCutoff(percent, c.min));
   if (i === -1) return null;
   const cur = sorted[i]!;
   const up = i > 0 ? sorted[i - 1]! : null;
   return {
     letter: cur.letter,
-    cushion: i === sorted.length - 1 ? null : percent - cur.min,
-    next: up ? { letter: up.letter, min: up.min, gap: up.min - percent } : null,
+    cushion: i === sorted.length - 1 ? null : percent - cutoffFloor(cur.min),
+    next: up ? { letter: up.letter, min: up.min, gap: cutoffFloor(up.min) - percent } : null,
   };
 }
 

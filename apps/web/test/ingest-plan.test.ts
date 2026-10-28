@@ -76,7 +76,7 @@ describe("ingest planning", () => {
 
   it("first sync records a snapshot and counts no changes", () => {
     const plan = planIngest(payload([9, null]), null, t0);
-    expect(plan.courses[0]!.snapshot).toEqual({ percent: 90, letter: "A-" });
+    expect(plan.courses[0]!.snapshot).toEqual({ percent: 90, letter: "A" });
     expect(plan.stats.changes).toBe(0);
     // Scores that existed before tracking began have no known posting time.
     expect(plan.courses[0]!.assignments[0]!.gradedAt).toBeNull();
@@ -105,7 +105,7 @@ describe("ingest planning", () => {
   it("refreshes an unchanged snapshot about once a day so charts have daily points", () => {
     const first = planIngest(payload([9]), null, t0);
     const nextDay = planIngest(payload([9]), stateAfter(first, t0.toISOString()), t2);
-    expect(nextDay.courses[0]!.snapshot).toEqual({ percent: 90, letter: "A-" });
+    expect(nextDay.courses[0]!.snapshot).toEqual({ percent: 90, letter: "A" });
   });
 
   it("prefers the grade Schoology reports over its own calculation", () => {
