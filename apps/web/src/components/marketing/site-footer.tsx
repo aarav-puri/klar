@@ -7,9 +7,8 @@ export function SiteFooter() {
       <div className="mx-auto max-w-6xl px-5 pt-16 pb-10 sm:px-8">
         <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
-            <span className="inline-flex size-12 items-center justify-center rounded-lg border-2 border-white/20 bg-white">
-              <KlarSymbol className="size-7" />
-            </span>
+            {/* The dark-theme blues, so the symbol reads on the dark footer without a tile. */}
+            <KlarSymbol className="size-10 [--sym-l:#3d9ad6] [--sym-r:#9fd3f5]" />
             <p className="mt-4 max-w-xs text-sm text-white/70">Your Schoology grades, made clear.</p>
           </div>
           <FooterCol title="Product" links={[["Features", "/#features"], ["How it works", "/#how"]]} />
